@@ -11,6 +11,17 @@
 
   win = $(window);
 
+  var emRemToPx = function( value, scope ) {
+    if (!scope || value.toLowerCase().indexOf("rem") >= 0) {
+        scope = 'body';
+    }
+    var multiplier = parseFloat(value);
+    var scopeTest = $('<div style="display: none; font-size: 1em; margin: 0; padding:0; height: auto; line-height: 1; border:0;">&nbsp;</div>').appendTo(scope);
+    var scopeVal = scopeTest.height();
+  scopeTest.remove();
+  return Math.round(multiplier * scopeVal);
+  };
+    
   $.fn.stick_in_parent = function(opts) {
     var elm, inner_scrolling, offset_top, parent_selector, sticky_class, _fn, _i, _len;
     if (opts == null) {
@@ -19,7 +30,9 @@
     sticky_class = opts.sticky_class, inner_scrolling = opts.inner_scrolling, parent_selector = opts.parent, offset_top = opts.offset_top;
     if (offset_top == null) {
       offset_top = 0;
-    }
+    } else if (!$.isNumeric(offset_top)) {
+      offset_top = emRemToPx(offset_top, elm);
+    }      
     if (parent_selector == null) {
       parent_selector = void 0;
     }
